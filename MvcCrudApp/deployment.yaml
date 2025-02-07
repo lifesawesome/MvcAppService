@@ -38,11 +38,26 @@ steps:
       testAssemblyVer2: '**\$(buildConfiguration)\**\*test*.dll'
       searchFolder: '$(System.DefaultWorkingDirectory)'
 
+  - task: ArchiveFiles@2
+    displayName: 'Create ZIP Package'
+    inputs:
+      rootFolderOrFile: '$(Build.ArtifactStagingDirectory)'
+      includeRootFolder: false
+      archiveType: 'zip'
+      archiveFile: '$(Build.ArtifactStagingDirectory)/app.zip'
+      replaceExistingArchive: true
+
+  - task: PublishBuildArtifacts@1
+    displayName: 'Publish Build Artifacts'
+    inputs:
+      pathToPublish: '$(Build.ArtifactStagingDirectory)/app.zip'
+      artifactName: 'drop'
+
   - task: AzureRmWebAppDeployment@4
     displayName: 'Deploy to Azure App Service'
     inputs:
       ConnectionType: 'AzureRM'
       azureSubscription: $(serviceConnection)
       appType: 'webApp'
-      WebAppName: $(demowebmvcservice)
-      package: '$(Build.ArtifactStagingDirectory)/**/*.zip'
+      WebAppName: $(appName)
+      package: '$(Pipeline.Workspace)/drop/app.zip'
