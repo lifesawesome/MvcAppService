@@ -44,5 +44,5 @@ steps:
       ConnectionType: 'AzureRM'
       azureSubscription: $(serviceConnection)
       appType: 'webApp'
-      WebAppName: $(appName)
+      WebAppName: $(demowebmvcservice)
       package: '$(Build.ArtifactStagingDirectory)/**/*.zip'
