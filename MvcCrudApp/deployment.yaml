@@ -1,0 +1,48 @@
+trigger:
+  branches:
+    include:
+      - main  # Adjust if using a different branch
+
+pool:
+  vmImage: 'windows-latest'
+
+variables:
+  appName: 'MyMvcApp'  # Change this to your App Service name
+  resourceGroup: 'MyResourceGroup'
+  serviceConnection: 'AzureAppServiceConnection'
+
+steps:
+  - task: UseDotNet@2
+    displayName: 'Install .NET SDK'
+    inputs:
+      packageType: 'sdk'
+      version: '9.0.102'  # Change based on your .NET version
+      installationPath: $(Agent.ToolsDirectory)/dotnet
+
+  - task: NuGetCommand@2
+    displayName: 'Restore NuGet Packages'
+    inputs:
+      restoreSolution: '**/*.sln'
+
+  - task: VSBuild@1
+    displayName: 'Build Solution'
+    inputs:
+      solution: '**/*.sln'
+      platform: 'Any CPU'
+      configuration: 'Release'
+
+  - task: VSTest@2
+    displayName: 'Run Unit Tests'
+    inputs:
+      testSelector: 'testAssemblies'
+      testAssemblyVer2: '**\$(buildConfiguration)\**\*test*.dll'
+      searchFolder: '$(System.DefaultWorkingDirectory)'
+
+  - task: AzureRmWebAppDeployment@4
+    displayName: 'Deploy to Azure App Service'
+    inputs:
+      ConnectionType: 'AzureRM'
+      azureSubscription: $(serviceConnection)
+      appType: 'webApp'
+      WebAppName: $(appName)
+      package: '$(Build.ArtifactStagingDirectory)/**/*.zip'
