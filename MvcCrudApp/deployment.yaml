@@ -7,8 +7,8 @@ pool:
   vmImage: 'windows-latest'
 
 variables:
-  appName: 'MyMvcApp'  # Change this to your App Service name
-  resourceGroup: 'MyResourceGroup'
+  appName: 'demowebappresource'  # Change this to your App Service name
+  resourceGroup: 'demowebappresource'
   serviceConnection: 'AzureAppServiceConnection'
 
 steps:
