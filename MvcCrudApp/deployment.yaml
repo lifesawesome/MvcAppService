@@ -30,27 +30,34 @@ steps:
   - task: ArchiveFiles@2
     displayName: 'Create ZIP Package'
     inputs:
-      rootFolderOrFile: '$(Build.SourcesDirectory)\MvcCrudApp\bin\Release\net9.0'  # Correct path
+      rootFolderOrFile: '$(Build.BinariesDirectory)'  # Automatically matches the build output folder
       includeRootFolder: false
       archiveType: 'zip'
-      archiveFile: '$(Build.ArtifactStagingDirectory)/app.zip'
+      archiveFile: '$(Pipeline.Workspace)/drop/app.zip'
       replaceExistingArchive: true
 
-  # Use Azure CLI to upload and extract the ZIP to the app's wwwroot directory
-
+  # Step 4: Deploy Using Run-From-Folder
   - task: AzureCLI@2
     displayName: 'Deploy Using Run-From-Folder'
     inputs:
-     azureSubscription: $(serviceConnection)
-     scriptType: bash
-     scriptLocation: inlineScript
-     inlineScript: |
-      # Extract the ZIP to a temporary folder
-      unzip -o $(Pipeline.Workspace)/drop/app.zip -d $(Pipeline.Workspace)/extracted
+      azureSubscription: $(serviceConnection)
+      scriptType: bash
+      scriptLocation: inlineScript
+      inlineScript: |
+        # Ensure the ZIP file exists
+        if [ ! -f "$(Pipeline.Workspace)/drop/app.zip" ]; then
+          echo "ERROR: Deployment ZIP file not found."
+          exit 1
+        fi
 
-      # Deploy extracted content to the wwwroot directory
-      az webapp deployment source config-local-git --name $(appName) --resource-group $(resourceGroup) --manual-integration
-      az webapp deployment list-publishing-profiles --name $(appName) --resource-group $(resourceGroup) --output table
+        # Extract the ZIP to a temporary folder
+        unzip -o $(Pipeline.Workspace)/drop/app.zip -d $(Pipeline.Workspace)/extracted
 
-      # Clear WEBSITE_RUN_FROM_PACKAGE if needed
-      az webapp config appsettings set --name $(appName) --resource-group $(resourceGroup) --settings WEBSITE_RUN_FROM_PACKAGE=0
+        # Deploy extracted content to the wwwroot directory
+        az webapp deployment source config-zip --name $(appName) --resource-group $(resourceGroup) --src $(Pipeline.Workspace)/drop/app.zip
+
+        # Clear WEBSITE_RUN_FROM_PACKAGE if needed
+        az webapp config appsettings delete --name $(appName) --resource-group $(resourceGroup) --setting-names WEBSITE_RUN_FROM_PACKAGE
+
+        # Restart the app to apply changes
+        az webapp restart --name $(appName) --resource-group $(resourceGroup)
