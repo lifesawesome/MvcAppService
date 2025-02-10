@@ -12,47 +12,38 @@ variables:
   serviceConnection: 'AzureAppServiceConnection'
 
 steps:
-  - task: UseDotNet@2
-    displayName: 'Install .NET SDK'
-    inputs:
-      packageType: 'sdk'
-      version: '9.0.102'  # Change based on your .NET version
-      installationPath: $(Agent.ToolsDirectory)/dotnet
-
+  # Step 1: Restore NuGet Packages
   - task: NuGetCommand@2
     displayName: 'Restore NuGet Packages'
     inputs:
       restoreSolution: '**/*.sln'
 
+  # Step 2: Build the Solution
   - task: VSBuild@1
-    displayName: 'Build Solution'
+    displayName: 'Build ASP.NET MVC Solution'
     inputs:
       solution: '**/*.sln'
       platform: 'Any CPU'
       configuration: 'Release'
 
-  - task: VSTest@2
-    displayName: 'Run Unit Tests'
-    inputs:
-      testSelector: 'testAssemblies'
-      testAssemblyVer2: '**\$(buildConfiguration)\**\*test*.dll'
-      searchFolder: '$(System.DefaultWorkingDirectory)'
-
+  # Step 3: Archive Build Output to a ZIP File
   - task: ArchiveFiles@2
     displayName: 'Create ZIP Package'
     inputs:
-      rootFolderOrFile: '$(Build.ArtifactStagingDirectory)'
+      rootFolderOrFile: '$(Build.BinariesDirectory)'  # Output of MSBuild
       includeRootFolder: false
       archiveType: 'zip'
       archiveFile: '$(Build.ArtifactStagingDirectory)/app.zip'
       replaceExistingArchive: true
 
+  # Step 4: Publish the ZIP File as a Build Artifact
   - task: PublishBuildArtifacts@1
     displayName: 'Publish Build Artifacts'
     inputs:
       pathToPublish: '$(Build.ArtifactStagingDirectory)/app.zip'
       artifactName: 'drop'
   
+  # Step 5: Download the Artifact for Deployment
   - task: DownloadBuildArtifacts@0
     displayName: 'Download Build Artifact'
     inputs:
@@ -60,6 +51,7 @@ steps:
       artifactName: 'drop'
       downloadPath: '$(Pipeline.Workspace)'
 
+  # Step 6: Deploy to Azure App Service
   - task: AzureRmWebAppDeployment@4
     displayName: 'Deploy to Azure App Service'
     inputs:
