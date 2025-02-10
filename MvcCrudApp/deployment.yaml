@@ -29,18 +29,17 @@ steps:
   # Step 3: Log the Build Output Directory (Verify Build Output)
   - script: |
       echo "Checking build output directory..."
-      dir "$(Build.SourcesDirectory)\MvcCrudApp\bin\Release" /s
+      dir "$(Build.SourcesDirectory)\MvcCrudApp\bin\Release\net9.0" /s
     displayName: 'Log Build Output Directory'
 
-  # Step 4: Archive Build Output to a ZIP File
   - task: ArchiveFiles@2
     displayName: 'Create ZIP Package'
     inputs:
-      rootFolderOrFile: '$(Build.SourcesDirectory)\MvcCrudApp\bin\Release'  # Use * to select only contents
-      includeRootFolder: false  # Do not include the root folder in the ZIP
-      archiveType: 'zip'
-      archiveFile: '$(Build.ArtifactStagingDirectory)/app.zip'
-      replaceExistingArchive: true
+     rootFolderOrFile: '$(Build.SourcesDirectory)\MvcCrudApp\bin\Release\net9.0'  # Only contents of net9.0
+     includeRootFolder: false  # Do not include the root folder in the ZIP
+     archiveType: 'zip'
+     archiveFile: '$(Build.ArtifactStagingDirectory)/app.zip'
+     replaceExistingArchive: true
 
   # Step 5: Log the Archive Location (Verify ZIP Creation)
   - script: |
