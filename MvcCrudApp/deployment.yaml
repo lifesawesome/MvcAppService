@@ -1,13 +1,13 @@
 trigger:
   branches:
     include:
-      - main  # Adjust if using a different branch
+      - main
 
 pool:
   vmImage: 'windows-latest'
 
 variables:
-  appName: 'demowebmvcservice'  # Change this to your App Service name
+  appName: 'demowebmvcservice'  # Your App Service name
   resourceGroup: 'demowebappresource'
   serviceConnection: 'AzureAppServiceConnection'
 
@@ -36,8 +36,8 @@ steps:
   - task: ArchiveFiles@2
     displayName: 'Create ZIP Package'
     inputs:
-      rootFolderOrFile: '$(Build.SourcesDirectory)\MvcCrudApp\bin\Release\net9.0'
-      includeRootFolder: false
+      rootFolderOrFile: '$(Build.SourcesDirectory)\MvcCrudApp\bin\Release\net9.0\*'  # Use * to select only contents
+      includeRootFolder: false  # Do not include the root folder in the ZIP
       archiveType: 'zip'
       archiveFile: '$(Build.ArtifactStagingDirectory)/app.zip'
       replaceExistingArchive: true
@@ -67,8 +67,8 @@ steps:
         # Deploy the ZIP file to Azure App Service
         az webapp deployment source config-zip --name $(appName) --resource-group $(resourceGroup) --src "$(Build.ArtifactStagingDirectory)/app.zip"
 
-        # Clear WEBSITE_RUN_FROM_PACKAGE setting
-        az webapp config appsettings delete --name $(appName) --resource-group $(resourceGroup) --setting-names WEBSITE_RUN_FROM_PACKAGE
-
         # Restart the App Service
+        echo "Restarting the App Service..."
         az webapp restart --name $(appName) --resource-group $(resourceGroup)
+
+        echo "Deployment completed successfully."
