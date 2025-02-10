@@ -37,7 +37,7 @@ steps:
     displayName: 'Create ZIP Package'
     inputs:
       rootFolderOrFile: '$(Build.SourcesDirectory)\MvcCrudApp\bin\Release\net9.0'
-      includeRootFolder: false
+      includeRootFolder: true
       archiveType: 'zip'
       archiveFile: '$(Build.ArtifactStagingDirectory)/app.zip'
       replaceExistingArchive: true
