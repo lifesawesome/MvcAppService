@@ -337,3 +337,4 @@ C:\src\SampleApp\MvcCrudApp\bin\Debug\net9.0\ru\Microsoft.CodeAnalysis.Scripting
 C:\src\SampleApp\MvcCrudApp\bin\Debug\net9.0\tr\Microsoft.CodeAnalysis.Scripting.resources.dll
 C:\src\SampleApp\MvcCrudApp\bin\Debug\net9.0\zh-Hans\Microsoft.CodeAnalysis.Scripting.resources.dll
 C:\src\SampleApp\MvcCrudApp\bin\Debug\net9.0\zh-Hant\Microsoft.CodeAnalysis.Scripting.resources.dll
+C:\src\SampleApp\MvcCrudApp\obj\Debug\net9.0\MvcCrudApp.sourcelink.json
