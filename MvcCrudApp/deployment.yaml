@@ -52,6 +52,9 @@ steps:
       artifactName: 'drop'
       downloadPath: '$(Pipeline.Workspace)'
 
+  - script: powershell -Command "Expand-Archive -Path $(Pipeline.Workspace)/drop/app.zip -DestinationPath $(Pipeline.Workspace)/extracted -Force"
+    displayName: 'Extract ZIP File'
+
   # Step 6: Deploy to Azure App Service
   - task: AzureRmWebAppDeployment@4
     displayName: 'Deploy to Azure App Service'
@@ -60,4 +63,5 @@ steps:
       azureSubscription: $(serviceConnection)
       appType: 'webApp'
       WebAppName: $(appName)
-      package: '$(Pipeline.Workspace)/drop/app.zip'
+      package: '$(Pipeline.Workspace)/extracted'
+
