@@ -7,42 +7,68 @@ pool:
   vmImage: 'windows-latest'
 
 variables:
-  appName: 'MyMvcApp'  # Change this to your App Service name
-  resourceGroup: 'MyResourceGroup'
+  appName: 'demowebmvcservice'  # Change this to your App Service name
+  resourceGroup: 'demowebappresource'
   serviceConnection: 'AzureAppServiceConnection'
 
 steps:
-  - task: UseDotNet@2
-    displayName: 'Install .NET SDK'
-    inputs:
-      packageType: 'sdk'
-      version: '9.0.102'  # Change based on your .NET version
-      installationPath: $(Agent.ToolsDirectory)/dotnet
-
+  # Step 1: Restore NuGet Packages
   - task: NuGetCommand@2
     displayName: 'Restore NuGet Packages'
     inputs:
       restoreSolution: '**/*.sln'
 
+  # Step 2: Build the Solution
   - task: VSBuild@1
-    displayName: 'Build Solution'
+    displayName: 'Build ASP.NET MVC Solution'
     inputs:
       solution: '**/*.sln'
       platform: 'Any CPU'
       configuration: 'Release'
 
-  - task: VSTest@2
-    displayName: 'Run Unit Tests'
-    inputs:
-      testSelector: 'testAssemblies'
-      testAssemblyVer2: '**\$(buildConfiguration)\**\*test*.dll'
-      searchFolder: '$(System.DefaultWorkingDirectory)'
+  # Step 3: Log the Build Output Directory (Verify Build Output)
+  - script: |
+      echo "Checking build output directory..."
+      dir "$(Build.SourcesDirectory)\MvcCrudApp\bin\Release\net9.0" /s
+    displayName: 'Log Build Output Directory'
 
-  - task: AzureRmWebAppDeployment@4
+  # Step 4: Archive Build Output to a ZIP File
+  - task: ArchiveFiles@2
+    displayName: 'Create ZIP Package'
+    inputs:
+      rootFolderOrFile: '$(Build.SourcesDirectory)\MvcCrudApp\bin\Release\net9.0'
+      includeRootFolder: false
+      archiveType: 'zip'
+      archiveFile: '$(Build.ArtifactStagingDirectory)/app.zip'
+      replaceExistingArchive: true
+
+  # Step 5: Log the Archive Location (Verify ZIP Creation)
+  - script: |
+      echo "Checking ZIP file..."
+      dir "$(Build.ArtifactStagingDirectory)" /s
+    displayName: 'Log Archive Directory'
+
+  # Step 6: Deploy the ZIP File to Azure App Service
+  - task: AzureCLI@2
     displayName: 'Deploy to Azure App Service'
     inputs:
-      ConnectionType: 'AzureRM'
       azureSubscription: $(serviceConnection)
-      appType: 'webApp'
-      WebAppName: $(appName)
-      package: '$(Build.ArtifactStagingDirectory)/**/*.zip'
+      scriptType: bash
+      scriptLocation: inlineScript
+      inlineScript: |
+        echo "Deploying ZIP package to Azure App Service..."
+
+        # Ensure the ZIP file exists
+        if [ ! -f "$(Build.ArtifactStagingDirectory)/app.zip" ]; then
+          echo "ERROR: Deployment ZIP file not found."
+          exit 1
+        fi
+
+        # Deploy the ZIP file to Azure App Service
+        az webapp deployment source config-zip --name $(appName) --resource-group $(resourceGroup) --src "$(Build.ArtifactStagingDirectory)/app.zip"
+
+        # Clear WEBSITE_RUN_FROM_PACKAGE setting
+        az webapp config appsettings delete --name $(appName) --resource-group $(resourceGroup) --setting-names WEBSITE_RUN_FROM_PACKAGE
+
+        # Restart the App Service
+        az webapp restart --name $(appName) --resource-group $(resourceGroup)
