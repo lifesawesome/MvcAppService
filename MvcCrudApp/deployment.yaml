@@ -12,38 +12,39 @@ variables:
   serviceConnection: 'AzureAppServiceConnection'
 
 steps:
-# Restore NuGet packages
-- task: NuGetCommand@2
-  displayName: 'Restore NuGet Packages'
-  inputs:
-    restoreSolution: '**/*.sln'
+  # Step 1: Restore NuGet Packages
+  - task: NuGetCommand@2
+    displayName: 'Restore NuGet Packages'
+    inputs:
+      restoreSolution: '**/*.sln'
 
-# Build the solution
-- task: VSBuild@1
-  displayName: 'Build Solution'
-  inputs:
-    solution: '**/*.sln'
-    platform: 'Any CPU'
-    configuration: 'Release'
+  # Step 2: Build the Solution
+  - task: VSBuild@1
+    displayName: 'Build ASP.NET MVC Solution'
+    inputs:
+      solution: '**/*.sln'
+      platform: 'Any CPU'
+      configuration: 'Release'
+    
+  # Step 3: Archive Build Output to a ZIP File
+  - task: ArchiveFiles@2
+    displayName: 'Create ZIP Package'
+    inputs:
+      rootFolderOrFile: '$(Build.SourcesDirectory)\MvcCrudApp\bin\Release\net9.0'  # Correct path
+      includeRootFolder: false
+      archiveType: 'zip'
+      archiveFile: '$(Build.ArtifactStagingDirectory)/app.zip'
+      replaceExistingArchive: true
 
-# Archive the build output into a ZIP file
-- task: ArchiveFiles@2
-  displayName: 'Create ZIP Package'
-  inputs:
-    rootFolderOrFile: '$(Build.BinariesDirectory)'  # Ensure it matches your build output
-    includeRootFolder: false
-    archiveType: 'zip'
-    archiveFile: '$(Pipeline.Workspace)/drop/app.zip'
-    replaceExistingArchive: true
+  # Use Azure CLI to upload and extract the ZIP to the app's wwwroot directory
 
-# Use Azure CLI to upload and extract the ZIP to the app's wwwroot directory
-- task: AzureCLI@2
-  displayName: 'Deploy Using Run-From-Folder'
-  inputs:
-    azureSubscription: $(serviceConnection)
-    scriptType: bash
-    scriptLocation: inlineScript
-    inlineScript: |
+  - task: AzureCLI@2
+    displayName: 'Deploy Using Run-From-Folder'
+    inputs:
+     azureSubscription: $(serviceConnection)
+     scriptType: bash
+     scriptLocation: inlineScript
+     inlineScript: |
       # Extract the ZIP to a temporary folder
       unzip -o $(Pipeline.Workspace)/drop/app.zip -d $(Pipeline.Workspace)/extracted
 
