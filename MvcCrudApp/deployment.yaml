@@ -37,11 +37,12 @@ steps:
   - task: ArchiveFiles@2
     displayName: 'Create ZIP Package'
     inputs:
-      rootFolderOrFile: '$(Build.BinariesDirectory)'  # Output of MSBuild
+      rootFolderOrFile: '$(Build.SourcesDirectory)\MvcCrudApp\bin\Release\net9.0'  # Correct path
       includeRootFolder: false
       archiveType: 'zip'
       archiveFile: '$(Build.ArtifactStagingDirectory)/app.zip'
       replaceExistingArchive: true
+
 
   # Step 4: Publish the ZIP File as a Build Artifact
   - task: PublishBuildArtifacts@1
