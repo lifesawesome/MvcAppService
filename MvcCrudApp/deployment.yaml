@@ -12,56 +12,44 @@ variables:
   serviceConnection: 'AzureAppServiceConnection'
 
 steps:
-  # Step 1: Restore NuGet Packages
-  - task: NuGetCommand@2
-    displayName: 'Restore NuGet Packages'
-    inputs:
-      restoreSolution: '**/*.sln'
+# Restore NuGet packages
+- task: NuGetCommand@2
+  displayName: 'Restore NuGet Packages'
+  inputs:
+    restoreSolution: '**/*.sln'
 
-  # Step 2: Build the Solution
-  - task: VSBuild@1
-    displayName: 'Build ASP.NET MVC Solution'
-    inputs:
-      solution: '**/*.sln'
-      platform: 'Any CPU'
-      configuration: 'Release'
-    
-  # Step 3: Archive Build Output to a ZIP File
-  - task: ArchiveFiles@2
-    displayName: 'Create ZIP Package'
-    inputs:
-      rootFolderOrFile: '$(Build.SourcesDirectory)\MvcCrudApp\bin\Release\net9.0'  # Correct path
-      includeRootFolder: false
-      archiveType: 'zip'
-      archiveFile: '$(Build.ArtifactStagingDirectory)/app.zip'
-      replaceExistingArchive: true
+# Build the solution
+- task: VSBuild@1
+  displayName: 'Build Solution'
+  inputs:
+    solution: '**/*.sln'
+    platform: 'Any CPU'
+    configuration: 'Release'
 
+# Archive the build output into a ZIP file
+- task: ArchiveFiles@2
+  displayName: 'Create ZIP Package'
+  inputs:
+    rootFolderOrFile: '$(Build.BinariesDirectory)'  # Ensure it matches your build output
+    includeRootFolder: false
+    archiveType: 'zip'
+    archiveFile: '$(Pipeline.Workspace)/drop/app.zip'
+    replaceExistingArchive: true
 
-  # Step 4: Publish the ZIP File as a Build Artifact
-  - task: PublishBuildArtifacts@1
-    displayName: 'Publish Build Artifacts'
-    inputs:
-      pathToPublish: '$(Build.ArtifactStagingDirectory)/app.zip'
-      artifactName: 'drop'
-  
-  # Step 5: Download the Artifact for Deployment
-  - task: DownloadBuildArtifacts@0
-    displayName: 'Download Build Artifact'
-    inputs:
-      buildType: 'current'
-      artifactName: 'drop'
-      downloadPath: '$(Pipeline.Workspace)'
+# Use Azure CLI to upload and extract the ZIP to the app's wwwroot directory
+- task: AzureCLI@2
+  displayName: 'Deploy Using Run-From-Folder'
+  inputs:
+    azureSubscription: $(serviceConnection)
+    scriptType: bash
+    scriptLocation: inlineScript
+    inlineScript: |
+      # Extract the ZIP to a temporary folder
+      unzip -o $(Pipeline.Workspace)/drop/app.zip -d $(Pipeline.Workspace)/extracted
 
-  - script: powershell -Command "Expand-Archive -Path $(Pipeline.Workspace)/drop/app.zip -DestinationPath $(Pipeline.Workspace)/extracted -Force"
-    displayName: 'Extract ZIP File'
+      # Deploy extracted content to the wwwroot directory
+      az webapp deployment source config-local-git --name $(appName) --resource-group $(resourceGroup) --manual-integration
+      az webapp deployment list-publishing-profiles --name $(appName) --resource-group $(resourceGroup) --output table
 
-  # Step 6: Deploy to Azure App Service
-  - task: AzureRmWebAppDeployment@4
-    displayName: 'Deploy to Azure App Service'
-    inputs:
-      ConnectionType: 'AzureRM'
-      azureSubscription: $(serviceConnection)
-      appType: 'webApp'
-      WebAppName: $(appName)
-      package: '$(Pipeline.Workspace)/extracted'
-
+      # Clear WEBSITE_RUN_FROM_PACKAGE if needed
+      az webapp config appsettings set --name $(appName) --resource-group $(resourceGroup) --settings WEBSITE_RUN_FROM_PACKAGE=0
