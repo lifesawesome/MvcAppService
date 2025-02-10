@@ -30,7 +30,7 @@ steps:
   - script: dir $(Build.BinariesDirectory) /s
     displayName: 'List Build Output Directory'
 
-  - script: dir $(Build.SourcesDirectory)/bin/Release /s
+  - script: dir $(Build.SourcesDirectory)\bin\Release /s
     displayName: 'List Build Output in Sources Directory'
     
   # Step 3: Archive Build Output to a ZIP File
