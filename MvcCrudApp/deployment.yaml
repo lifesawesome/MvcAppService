@@ -7,7 +7,7 @@ pool:
   vmImage: 'windows-latest'
 
 variables:
-  appName: 'demowebmvcservice'  # Your App Service name
+  appName: 'demowebmvcservice-staging'  # Your App Service name
   resourceGroup: 'demowebappresource'
   serviceConnection: 'AzureAppServiceConnection'
 
