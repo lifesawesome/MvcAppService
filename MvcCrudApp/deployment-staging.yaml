@@ -1,0 +1,73 @@
+trigger:
+  branches:
+    include:
+      - main
+
+pool:
+  vmImage: 'windows-latest'
+
+variables:
+  appName: 'demowebmvcservice'  # Your App Service name
+  resourceGroup: 'demowebappresource'
+  serviceConnection: 'AzureAppServiceConnection'
+
+steps:
+  # Step 1: Restore NuGet Packages
+  - task: NuGetCommand@2
+    displayName: 'Restore NuGet Packages'
+    inputs:
+      restoreSolution: '**/*.sln'
+
+  # Step 2: Build the Solution
+  - task: VSBuild@1
+    displayName: 'Build ASP.NET MVC Solution'
+    inputs:
+      solution: '**/*.sln'
+      platform: 'Any CPU'
+      configuration: 'Release'
+
+  # Step 3: Log the Build Output Directory (Verify Build Output)
+  - script: |
+      echo "Checking build output directory..."
+      dir "$(Build.SourcesDirectory)\MvcCrudApp\bin\Release\net9.0" /s
+    displayName: 'Log Build Output Directory'
+
+  - task: ArchiveFiles@2
+    displayName: 'Create ZIP Package'
+    inputs:
+     rootFolderOrFile: '$(Build.SourcesDirectory)\MvcCrudApp\bin\Release\net9.0'  # Only contents of net9.0
+     includeRootFolder: false  # Do not include the root folder in the ZIP
+     archiveType: 'zip'
+     archiveFile: '$(Build.ArtifactStagingDirectory)/app.zip'
+     replaceExistingArchive: true
+
+  # Step 5: Log the Archive Location (Verify ZIP Creation)
+  - script: |
+      echo "Checking ZIP file..."
+      dir "$(Build.ArtifactStagingDirectory)" /s
+    displayName: 'Log Archive Directory'
+
+  # Step 6: Deploy the ZIP File to Azure App Service
+  - task: AzureCLI@2
+    displayName: 'Deploy to Azure App Service'
+    inputs:
+      azureSubscription: $(serviceConnection)
+      scriptType: bash
+      scriptLocation: inlineScript
+      inlineScript: |
+        echo "Deploying to the staging slot of App Service..."
+
+        # Ensure the ZIP file exists
+        if [ ! -f "$(Build.ArtifactStagingDirectory)/app.zip" ]; then
+          echo "ERROR: Deployment ZIP file not found."
+          exit 1
+        fi
+
+        # Deploy the ZIP file to Azure App Service
+        az webapp deployment source config-zip --name $(appName) --resource-group $(resourceGroup) --src "$(Build.ArtifactStagingDirectory)/app.zip" --slot staging
+
+        # Restart the App Service
+        echo "Restarting the App Service..."
+        az webapp restart --name $(appName) --resource-group $(resourceGroup) --slot staging
+
+        echo "Deployment completed successfully."
