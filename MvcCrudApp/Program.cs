@@ -6,9 +6,12 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
+var keyVaultUri = builder.Configuration["ConnectionStrings:DefaultConnection"];
+
 // Configure Database Context
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseSqlServer(keyVaultUri));
+
 
 var app = builder.Build();
 
