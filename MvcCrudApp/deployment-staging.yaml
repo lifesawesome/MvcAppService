@@ -2,7 +2,9 @@ trigger:
   branches:
     include:
       - main
-
+  paths:
+    include:
+      - deployment-staging.yaml
 pool:
   vmImage: 'windows-latest'
 
