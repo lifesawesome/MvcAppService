@@ -7,21 +7,28 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using MvcCrudApp.Data;
 using MvcCrudApp.Models;
+using Microsoft.ApplicationInsights;
 
 namespace MvcCrudApp.Controllers
 {
     public class EmployeeController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly TelemetryClient _telemetryClient;
 
-        public EmployeeController(ApplicationDbContext context)
+
+        public EmployeeController(ApplicationDbContext context, TelemetryClient telemetryClient)
         {
             _context = context;
+            _telemetryClient = telemetryClient;
         }
 
         // GET: Employee
         public async Task<IActionResult> Index()
         {
+
+            // Track a custom event
+            _telemetryClient.TrackEvent("EmployeepageVisited");
             return View(await _context.Employees.ToListAsync());
         }
 

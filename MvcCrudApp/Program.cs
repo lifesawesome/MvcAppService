@@ -14,6 +14,9 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(keyVaultUri));
 
 builder.Services.AddApplicationInsightsTelemetry();
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole();
+builder.Logging.AddApplicationInsights();
 
 builder.Services.Configure<TelemetryConfiguration>(config =>
 {
