@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using MvcCrudApp.Data;
+using Microsoft.ApplicationInsights.Extensibility;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,6 +12,15 @@ var keyVaultUri = builder.Configuration["ConnectionStrings:DefaultConnection"];
 // Configure Database Context
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(keyVaultUri));
+
+builder.Services.AddApplicationInsightsTelemetry();
+
+builder.Services.Configure<TelemetryConfiguration>(config =>
+{
+    config.TelemetryInitializers.Add(new OperationCorrelationTelemetryInitializer());
+});
+
+builder.Services.AddControllersWithViews();
 
 
 var app = builder.Build();
