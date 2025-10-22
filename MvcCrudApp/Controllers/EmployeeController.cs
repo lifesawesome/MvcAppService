@@ -161,8 +161,8 @@ namespace MvcCrudApp.Controllers
             return _context.Employees.Any(e => e.Id == id);
         }
 
-        // GET: Employee/FarewellEmployee
-        public IActionResult FarewellEmployee(string name)
+        // GET: Employee/WelcomeEmployee
+        public IActionResult WelcomeEmployee(string name)
         {
             ViewData["Message"] = $"Welcome, {name}!";
             return View();
