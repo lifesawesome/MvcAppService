@@ -160,5 +160,12 @@ namespace MvcCrudApp.Controllers
         {
             return _context.Employees.Any(e => e.Id == id);
         }
+
+        // GET: Employee/FarewellEmployee
+        public IActionResult FarewellEmployee(string name)
+        {
+            ViewData["Message"] = $"Welcome, {name}!";
+            return View();
+        }
     }
 }
