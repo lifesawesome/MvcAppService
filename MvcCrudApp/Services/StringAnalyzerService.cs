@@ -101,8 +101,8 @@ namespace MvcCrudApp.Services
                 var largestString = GetLargestString(strings);
                 var isPalindrome = IsPalindrome(largestString);
                 
-                _logger.LogInformation("GetLargestStringAndCheckPalindrome - Largest: {Largest}, IsPalindrome: {IsPalindrome}", 
-                    largestString ?? "null", isPalindrome);
+                _logger.LogInformation("GetLargestStringAndCheckPalindrome - HasResult: {HasResult}, Length: {Length}, IsPalindrome: {IsPalindrome}", 
+                    largestString != null, largestString?.Length ?? 0, isPalindrome);
                 
                 _telemetryClient.TrackEvent("GetLargestStringAndCheckPalindrome", new Dictionary<string, string>
                 {
