@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using MvcCrudApp.Data;
+using MvcCrudApp.Services;
 using Microsoft.ApplicationInsights.Extensibility;
 using Azure.Identity;
 
@@ -14,6 +15,9 @@ if (!builder.Environment.IsDevelopment())
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+// Register String Analyzer Service
+builder.Services.AddScoped<IStringAnalyzerService, StringAnalyzerService>();
 
 // Configure Database Context
 builder.Services.AddDbContext<ApplicationDbContext>(options =>

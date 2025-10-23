@@ -1,0 +1,80 @@
+@model MvcCrudApp.ViewModels.StringAnalysisViewModel
+
+@{
+    ViewData["Title"] = "String Analysis";
+}
+
+<h1>String Analysis</h1>
+
+<div class="row">
+    <div class="col-md-8">
+        <form asp-action="Index" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            
+            <div class="form-group">
+                <label asp-for="InputText" class="control-label"></label>
+                <textarea asp-for="InputText" class="form-control" rows="10" 
+                          placeholder="Enter strings, one per line&#10;Example:&#10;racecar&#10;hello world&#10;A man a plan a canal Panama"></textarea>
+                <span asp-validation-for="InputText" class="text-danger"></span>
+            </div>
+            
+            <div class="form-group mt-3">
+                <input type="submit" value="Analyze" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+@if (Model.HasResult)
+{
+    <div class="row mt-4">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h4>Analysis Results</h4>
+                </div>
+                <div class="card-body">
+                    <dl class="row">
+                        <dt class="col-sm-4">
+                            @Html.DisplayNameFor(model => model.LargestString)
+                        </dt>
+                        <dd class="col-sm-8">
+                            <strong>@Html.DisplayFor(model => model.LargestString)</strong>
+                        </dd>
+                        
+                        <dt class="col-sm-4">
+                            Length
+                        </dt>
+                        <dd class="col-sm-8">
+                            @(Model.LargestString?.Length ?? 0) characters
+                        </dd>
+                        
+                        <dt class="col-sm-4">
+                            @Html.DisplayNameFor(model => model.IsPalindrome)
+                        </dt>
+                        <dd class="col-sm-8">
+                            @if (Model.IsPalindrome)
+                            {
+                                <span class="badge bg-success">Yes</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary">No</span>
+                            }
+                        </dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<div class="row mt-3">
+    <div class="col-md-8">
+        <a asp-controller="Home" asp-action="Index" class="btn btn-link">Back to Home</a>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
