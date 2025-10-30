@@ -9,16 +9,18 @@ Hardcoded secrets were found committed to the repository in version control hist
 ## Compromised Credentials
 
 ### 1. Application Insights Instrumentation Key
-- **Key ID**: `d6e0f8e3-59f2-446e-bc7e-d8a9ee200981`
+- **Key ID**: `d6e0f8e3-****-****-****-************` (redacted)
 - **Location**: `MvcCrudApp/appsettings.json`
 - **First Committed**: October 6, 2025 (commit `0ba8ab8`)
 - **Removed**: October 30, 2025 (commit `e32e5f5`)
 - **Public Exposure**: Yes (committed to public/private repository)
+- **Full Key Available In**: Git history (commit `0ba8ab8`)
 
 ### 2. Database Connection String
 - **Type**: SQL LocalDB with Windows Authentication
-- **Connection String**: `Server=(localdb)\\mssqllocaldb;Database=EmployeeDB;Trusted_Connection=true;MultipleActiveResultSets=true`
-- **Risk Level**: Low (development-only, uses Windows Authentication)
+- **Database**: EmployeeDB (LocalDB)
+- **Authentication**: Windows Trusted Connection
+- **Risk Level**: Low (development-only, uses Windows Authentication, no credentials)
 - **Action Required**: None (safe for local development)
 
 ## Actions Taken
@@ -34,7 +36,9 @@ Hardcoded secrets were found committed to the repository in version control hist
 
 ### CRITICAL - Rotate Application Insights Key
 
-The Application Insights instrumentation key `d6e0f8e3-59f2-446e-bc7e-d8a9ee200981` was exposed in git history and **MUST be rotated immediately**.
+The Application Insights instrumentation key (starting with `d6e0f8e3-****`) was exposed in git history and **MUST be rotated immediately**.
+
+**Note**: The full key can be found in git commit `0ba8ab8` if needed for rotation verification.
 
 #### Steps to Rotate:
 
