@@ -5,10 +5,6 @@
       "Microsoft.AspNetCore": "Warning"
     }
   },
-  "ApplicationInsights": {
-    "ConnectionString": "InstrumentationKey=d6e0f8e3-59f2-446e-bc7e-d8a9ee200981"
-  },
-  "AllowedHosts": "*",
   "ConnectionStrings": {
     "DefaultConnection": "Server=(localdb)\\mssqllocaldb;Database=EmployeeDB;Trusted_Connection=true;MultipleActiveResultSets=true"
   }
