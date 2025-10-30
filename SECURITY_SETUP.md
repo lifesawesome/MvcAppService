@@ -73,8 +73,8 @@ The application is configured to use Azure Key Vault in production (non-Developm
 
 ### ApplicationInsights:ConnectionString
 - **Purpose**: Application monitoring and telemetry
-- **Format**: `InstrumentationKey=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx`
-- **Get from**: Azure Portal → Application Insights → Properties
+- **Format**: `InstrumentationKey=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx;IngestionEndpoint=https://region.in.applicationinsights.azure.com/;LiveEndpoint=https://region.livediagnostics.monitor.azure.com/`
+- **Get from**: Azure Portal → Application Insights → Properties → Connection String
 
 ## Security Best Practices
 
@@ -100,6 +100,6 @@ If you see errors about missing configuration:
 
 ## Documentation References
 
-- [ASP.NET Core User Secrets](https://docs.microsoft.com/en-us/aspnet/core/security/app-secrets)
-- [Azure Key Vault Configuration Provider](https://docs.microsoft.com/en-us/aspnet/core/security/key-vault-configuration)
-- [Managed Identity in App Service](https://docs.microsoft.com/en-us/azure/app-service/overview-managed-identity)
+- [ASP.NET Core User Secrets](https://learn.microsoft.com/en-us/aspnet/core/security/app-secrets)
+- [Azure Key Vault Configuration Provider](https://learn.microsoft.com/en-us/aspnet/core/security/key-vault-configuration)
+- [Managed Identity in App Service](https://learn.microsoft.com/en-us/azure/app-service/overview-managed-identity)
