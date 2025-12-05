@@ -1,10 +1,4 @@
 {
-    "github.copilot.chat.codeGeneration.instructions": [
-      {
-        "file": "MvcCrudApp/code-std.md"
-      }
-    
-    ],
-    "github.copilot.advanced": {}
+    "FSharp.suggestGitignore": false
   }
       

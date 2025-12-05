@@ -255,3 +255,5 @@ C:\src\SampleApp\MvcCrudApp\obj\Debug\net9.0\rjimswa.dswa.cache.json
 C:\src\SampleApp\MvcCrudApp\obj\Debug\net9.0\rjsmrazor.dswa.cache.json
 C:\src\SampleApp\MvcCrudApp\obj\Debug\net9.0\rjsmcshtml.dswa.cache.json
 C:\src\SampleApp\MvcCrudApp\obj\Debug\net9.0\staticwebassets.build.json.cache
+C:\src\SampleApp\MvcCrudApp\bin\Debug\net9.0\Azure.Extensions.AspNetCore.Configuration.Secrets.dll
+C:\src\SampleApp\MvcCrudApp\bin\Debug\net9.0\Azure.Security.KeyVault.Secrets.dll
