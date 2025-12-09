@@ -1,27 +1,28 @@
 @model IEnumerable<MvcCrudApp.Models.Employee>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Employee List";
 }
 
-<h1>Index</h1>
+<h1>Employee List</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create" class="btn btn-primary" aria-label="Create new employee">Create New Employee</a>
 </p>
-<table class="table">
+<table class="table table-striped" aria-label="Employee list">
+    <caption class="sr-only">List of employees with their name, department, position, and available actions</caption>
     <thead>
         <tr>
-            <th>
+            <th scope="col">
                 @Html.DisplayNameFor(model => model.Name)
             </th>
-            <th>
+            <th scope="col">
                 @Html.DisplayNameFor(model => model.Department)
             </th>
-            <th>
+            <th scope="col">
                 @Html.DisplayNameFor(model => model.Position)
             </th>
-            <th></th>
+            <th scope="col">Actions</th>
         </tr>
     </thead>
     <tbody>
@@ -37,9 +38,11 @@
                 @Html.DisplayFor(modelItem => item.Position)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                <a asp-action="Edit" asp-route-id="@item.Id" aria-label="Edit @item.Name">Edit</a>
+                <span aria-hidden="true">|</span>
+                <a asp-action="Details" asp-route-id="@item.Id" aria-label="View details for @item.Name">Details</a>
+                <span aria-hidden="true">|</span>
+                <a asp-action="Delete" asp-route-id="@item.Id" aria-label="Delete @item.Name">Delete</a>
             </td>
         </tr>
 }

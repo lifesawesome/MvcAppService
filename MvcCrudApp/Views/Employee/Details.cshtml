@@ -1,36 +1,36 @@
 @model MvcCrudApp.Models.Employee
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = $"Details - {Model?.Name}";
 }
 
-<h1>Details</h1>
+<h1>Employee Details</h1>
 
 <div>
-    <h4>Employee</h4>
+    <h2 class="h4">@Html.DisplayFor(model => model.Name)</h2>
     <hr />
     <dl class="row">
-        <dt class = "col-sm-2">
+        <dt class="col-sm-3">
             @Html.DisplayNameFor(model => model.Name)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-9">
             @Html.DisplayFor(model => model.Name)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-3">
             @Html.DisplayNameFor(model => model.Department)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-9">
             @Html.DisplayFor(model => model.Department)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-3">
             @Html.DisplayNameFor(model => model.Position)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-9">
             @Html.DisplayFor(model => model.Position)
         </dd>
     </dl>
 </div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+<div role="group" aria-label="Employee actions">
+    <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-primary" aria-label="Edit @Model?.Name">Edit</a>
+    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
 </div>
