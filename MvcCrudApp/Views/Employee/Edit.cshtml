@@ -1,41 +1,56 @@
 @model MvcCrudApp.Models.Employee
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = $"Edit - {Model?.Name}";
 }
 
-<h1>Edit</h1>
+<h1>Edit Employee</h1>
 
-<h4>Employee</h4>
+<h2 class="h4">@Html.DisplayFor(model => model.Name)</h2>
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <form asp-action="Edit" novalidate>
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert" aria-live="polite"></div>
             <input type="hidden" asp-for="Id" />
-            <div class="form-group">
-                <label asp-for="Name" class="control-label"></label>
-                <input asp-for="Name" class="form-control" />
-                <span asp-validation-for="Name" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Department" class="control-label"></label>
-                <input asp-for="Department" class="form-control" />
-                <span asp-validation-for="Department" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Position" class="control-label"></label>
-                <input asp-for="Position" class="form-control" />
-                <span asp-validation-for="Position" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
+            <fieldset>
+                <legend class="sr-only">Edit Employee Information</legend>
+                <p class="text-muted" id="form-instructions">
+                    <small>All fields marked with <span class="text-danger" aria-label="required">*</span> are required.</small>
+                </p>
+                <div class="form-group mb-3">
+                    <label asp-for="Name" class="control-label">
+                        @Html.DisplayNameFor(model => model.Name)
+                        <span class="text-danger" aria-label="required">*</span>
+                    </label>
+                    <input asp-for="Name" class="form-control" aria-required="true" aria-describedby="Name-error" />
+                    <span asp-validation-for="Name" class="text-danger" id="Name-error" role="alert"></span>
+                </div>
+                <div class="form-group mb-3">
+                    <label asp-for="Department" class="control-label">
+                        @Html.DisplayNameFor(model => model.Department)
+                        <span class="text-danger" aria-label="required">*</span>
+                    </label>
+                    <input asp-for="Department" class="form-control" aria-required="true" aria-describedby="Department-error" />
+                    <span asp-validation-for="Department" class="text-danger" id="Department-error" role="alert"></span>
+                </div>
+                <div class="form-group mb-3">
+                    <label asp-for="Position" class="control-label">
+                        @Html.DisplayNameFor(model => model.Position)
+                        <span class="text-danger" aria-label="required">*</span>
+                    </label>
+                    <input asp-for="Position" class="form-control" aria-required="true" aria-describedby="Position-error" />
+                    <span asp-validation-for="Position" class="text-danger" id="Position-error" role="alert"></span>
+                </div>
+                <div class="form-group" role="group" aria-label="Form actions">
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+                </div>
+            </fieldset>
         </form>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
