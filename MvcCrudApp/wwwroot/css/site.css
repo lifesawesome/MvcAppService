@@ -22,6 +22,8 @@ html {
   padding: 8px;
   text-decoration: none;
   z-index: 100;
+  border-radius: 4px;
+  font-weight: bold;
 }
 
 .skip-link:focus {
@@ -29,7 +31,8 @@ html {
 }
 
 /* Enhanced focus visibility for links */
-a:focus {
+a:focus,
+a:focus-visible {
   outline: 2px solid #258cfb;
   outline-offset: 2px;
 }
