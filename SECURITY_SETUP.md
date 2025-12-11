@@ -33,7 +33,7 @@ dotnet user-secrets set "ConnectionStrings:DefaultConnection" "Server=YOUR_SERVE
 
 **Example:**
 ```bash
-dotnet user-secrets set "ConnectionStrings:DefaultConnection" "Server=tcp:demoservercrud.database.windows.net,1433;Initial Catalog=EmployeeDB;User ID=YOUR_USER_ID;Password=YOUR_PASSWORD;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30"
+dotnet user-secrets set "ConnectionStrings:DefaultConnection" "Server=tcp:YOUR_SERVER.database.windows.net,1433;Initial Catalog=YOUR_DATABASE;User ID=YOUR_USER_ID;Password=YOUR_PASSWORD;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30"
 ```
 
 #### Step 3: Set Application Insights Connection String (Optional)
@@ -88,7 +88,7 @@ The application is already configured to use Azure Key Vault for non-development
 
 #### Prerequisites
 - Azure subscription
-- Azure Key Vault created: `https://demowebmvc-keyvault.vault.azure.net/`
+- Azure Key Vault created (e.g., `https://your-keyvault-name.vault.azure.net/`)
 - Appropriate permissions (Key Vault Secrets Officer or similar)
 
 #### Step 1: Add Secrets to Azure Key Vault
@@ -100,10 +100,10 @@ Using Azure CLI:
 az login
 
 # Set the Key Vault name
-KEYVAULT_NAME="demowebmvc-keyvault"
+KEYVAULT_NAME="your-keyvault-name"
 
 # Add Connection String
-az keyvault secret set --vault-name $KEYVAULT_NAME --name "ConnectionStrings--DefaultConnection" --value "Server=tcp:demoservercrud.database.windows.net,1433;Initial Catalog=EmployeeDB;User ID=YOUR_USER_ID;Password=YOUR_PASSWORD;..."
+az keyvault secret set --vault-name $KEYVAULT_NAME --name "ConnectionStrings--DefaultConnection" --value "Server=tcp:YOUR_SERVER.database.windows.net,1433;Initial Catalog=YOUR_DATABASE;User ID=YOUR_USER_ID;Password=YOUR_PASSWORD;..."
 
 # Add Application Insights Connection String
 az keyvault secret set --vault-name $KEYVAULT_NAME --name "ApplicationInsights--ConnectionString" --value "InstrumentationKey=YOUR_KEY"
@@ -121,7 +121,7 @@ For Azure App Service:
 2. Grant the Managed Identity access to the Key Vault:
 
 ```bash
-az keyvault set-policy --name demowebmvc-keyvault --object-id <MANAGED_IDENTITY_OBJECT_ID> --secret-permissions get list
+az keyvault set-policy --name your-keyvault-name --object-id <MANAGED_IDENTITY_OBJECT_ID> --secret-permissions get list
 ```
 
 #### Step 3: Deploy Application
@@ -200,7 +200,7 @@ If credentials were exposed (e.g., committed to Git):
 
 2. **Update Azure Key Vault:**
    ```bash
-   az keyvault secret set --vault-name demowebmvc-keyvault --name "ConnectionStrings--DefaultConnection" --value "NEW_CONNECTION_STRING"
+   az keyvault secret set --vault-name your-keyvault-name --name "ConnectionStrings--DefaultConnection" --value "NEW_CONNECTION_STRING"
    ```
 
 3. **Update User Secrets locally:**
