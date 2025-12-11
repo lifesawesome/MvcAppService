@@ -100,7 +100,7 @@ Using Azure CLI:
 az login
 
 # Set the Key Vault name
-$KEYVAULT_NAME="demowebmvc-keyvault"
+KEYVAULT_NAME="demowebmvc-keyvault"
 
 # Add Connection String
 az keyvault secret set --vault-name $KEYVAULT_NAME --name "ConnectionStrings--DefaultConnection" --value "Server=tcp:demoservercrud.database.windows.net,1433;Initial Catalog=EmployeeDB;User ID=YOUR_USER_ID;Password=YOUR_PASSWORD;..."
@@ -195,8 +195,8 @@ If credentials were exposed (e.g., committed to Git):
 
 1. **Immediately rotate all exposed credentials:**
    - Database passwords
-   - Application Insights keys
-   - Any other API keys
+   - Application Insights connection strings/instrumentation keys
+   - Any other API keys or secrets
 
 2. **Update Azure Key Vault:**
    ```bash

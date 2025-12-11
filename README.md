@@ -73,7 +73,13 @@ See [SECURITY_SETUP.md](SECURITY_SETUP.md) for detailed configuration instructio
 
 ## Security Guidelines
 
-Please review [.github/instructions/SecurityInstructions.instructions.md](.github/instructions/SecurityInstructions.instructions.md) before making code changes.
+⚠️ **Important Security Practices:**
+- Never commit secrets, credentials, or API keys to source control
+- Use User Secrets for development (see [SECURITY_SETUP.md](SECURITY_SETUP.md))
+- Use Azure Key Vault for production/staging environments
+- Follow OWASP security best practices for all code changes
+
+For detailed security guidelines, see project instructions in `.github/instructions/SecurityInstructions.instructions.md`.
 
 ## Contributing
 
