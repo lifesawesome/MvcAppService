@@ -1,0 +1,73 @@
+@{
+    ViewData["Title"] = "Search Employees";
+}
+
+<h1>Search Employees</h1>
+
+<div class="row">
+    <div class="col-md-8">
+        <form asp-action="Results" method="post" role="search" aria-label="Employee search form">
+            @Html.AntiForgeryToken()
+            
+            <div class="form-group mb-3">
+                <label for="searchTerm" class="form-label">
+                    Search Term
+                    <span class="text-muted">(minimum 2 characters)</span>
+                </label>
+                <input type="text" 
+                       class="form-control" 
+                       id="searchTerm" 
+                       name="searchTerm" 
+                       placeholder="Enter name, department, or position" 
+                       required
+                       minlength="2"
+                       aria-required="true"
+                       aria-describedby="searchHelp"
+                       autofocus />
+                <div id="searchHelp" class="form-text">
+                    Search across employee names, departments, and positions.
+                </div>
+            </div>
+
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary" aria-label="Submit search">
+                    <span aria-hidden="true">🔍</span> Search
+                </button>
+                <a asp-controller="Employee" asp-action="Index" class="btn btn-secondary">
+                    Back to Employee List
+                </a>
+            </div>
+        </form>
+
+        @if (ViewData.ModelState.ErrorCount > 0)
+        {
+            <div class="alert alert-danger mt-3" role="alert">
+                <h4 class="alert-heading">Please correct the following errors:</h4>
+                <ul class="mb-0">
+                    @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                    {
+                        <li>@error.ErrorMessage</li>
+                    }
+                </ul>
+            </div>
+        }
+    </div>
+
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Search Tips</h5>
+                <ul class="card-text">
+                    <li>Enter at least 2 characters to search</li>
+                    <li>Search is case-insensitive</li>
+                    <li>Partial matches are included</li>
+                    <li>Results show all matching employees</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
