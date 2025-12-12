@@ -57,11 +57,12 @@ namespace MvcCrudApp.Controllers
                 _logger.LogInformation("Search performed with term: {SearchTerm} at {Time}", searchTerm, DateTime.UtcNow);
 
                 // Parameterized query via LINQ (EF Core) - protects against SQL injection
+                // Using EF.Functions.Like for case-insensitive search
                 var results = await _context.Employees
                     .AsNoTracking()
-                    .Where(e => (e.Name != null && e.Name.Contains(searchTerm)) || 
-                                (e.Department != null && e.Department.Contains(searchTerm)) || 
-                                (e.Position != null && e.Position.Contains(searchTerm)))
+                    .Where(e => (e.Name != null && EF.Functions.Like(e.Name, $"%{searchTerm}%")) || 
+                                (e.Department != null && EF.Functions.Like(e.Department, $"%{searchTerm}%")) || 
+                                (e.Position != null && EF.Functions.Like(e.Position, $"%{searchTerm}%")))
                     .OrderBy(e => e.Name)
                     .ToListAsync();
 
