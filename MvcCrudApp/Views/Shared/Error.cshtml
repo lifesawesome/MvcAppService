@@ -1,7 +1,16 @@
-﻿@model ErrorViewModel
+@model ErrorViewModel
 @{
     ViewData["Title"] = "Error";
 }
+
+@* 
+    OWASP Security Compliance (A05:2021 - Security Misconfiguration):
+    This error page is designed to show minimal information to users:
+    - Only displays a generic error message
+    - RequestId shown for support correlation (non-sensitive)
+    - No stack traces, exception messages, or internal details exposed
+    - Development mode message reminds developers to disable detailed errors in production
+*@
 
 <h1 class="text-danger">Error.</h1>
 <h2 class="text-danger">An error occurred while processing your request.</h2>

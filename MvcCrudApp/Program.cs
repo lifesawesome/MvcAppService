@@ -41,6 +41,39 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
+// OWASP Security Headers (A05:2021 - Security Misconfiguration)
+app.Use(async (context, next) =>
+{
+    // Prevent MIME type sniffing
+    context.Response.Headers.Append("X-Content-Type-Options", "nosniff");
+    
+    // Prevent clickjacking attacks
+    context.Response.Headers.Append("X-Frame-Options", "DENY");
+    
+    // Enable XSS filter in browsers (legacy header for older browsers)
+    // Note: Modern browsers rely on CSP for XSS protection. This header is deprecated
+    // but included for backward compatibility with older browsers.
+    context.Response.Headers.Append("X-XSS-Protection", "1; mode=block");
+    
+    // Control referrer information
+    context.Response.Headers.Append("Referrer-Policy", "strict-origin-when-cross-origin");
+    
+    // Restrict dangerous browser features
+    context.Response.Headers.Append("Permissions-Policy", "geolocation=(), microphone=(), camera=()");
+    
+    // Content Security Policy - restrict resource loading
+    // Note: 'unsafe-inline' in style-src is required for Bootstrap compatibility.
+    // Consider migrating to nonces or external stylesheets for enhanced security.
+    context.Response.Headers.Append("Content-Security-Policy", 
+        "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; frame-ancestors 'none'");
+    
+    // Remove server identification headers
+    context.Response.Headers.Remove("Server");
+    context.Response.Headers.Remove("X-Powered-By");
+    
+    await next();
+});
+
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
