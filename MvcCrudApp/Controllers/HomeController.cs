@@ -36,9 +36,14 @@ public class HomeController : Controller
     /// <remarks>
     /// Security: Public access, no authentication required for landing page.
     /// No user input processed, no data persistence operations.
+    /// 
+    /// Privacy Note: IP addresses are logged for security monitoring purposes only.
+    /// Ensure this logging complies with your privacy policy and data retention requirements.
+    /// Consider anonymizing or hashing IP addresses if full address is not required.
     /// </remarks>
     public IActionResult Index()
     {
+        // Log page access for security monitoring (consider privacy implications)
         _logger.LogInformation("Home page accessed from IP: {IpAddress}", 
             HttpContext.Connection.RemoteIpAddress?.ToString() ?? "Unknown");
         
