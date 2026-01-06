@@ -62,19 +62,31 @@ public class HomeController : Controller
             _logger.LogDebug("Error page accessed from IP: {IPAddress}", HttpContext.Connection.RemoteIpAddress);
             
             // Validate and sanitize RequestId to prevent potential XSS
-            if (!string.IsNullOrEmpty(requestId) && requestId.Length > MaxRequestIdLength)
+            // Use whitelist approach: only allow alphanumeric, hyphens, underscores, and colons (for trace IDs)
+            if (!string.IsNullOrEmpty(requestId))
             {
-                _logger.LogWarning("Suspicious RequestId length detected: {Length}", requestId.Length);
-                requestId = requestId.Substring(0, MaxRequestIdLength);
+                if (requestId.Length > MaxRequestIdLength)
+                {
+                    _logger.LogWarning("Suspicious RequestId length detected: {Length}", requestId.Length);
+                    requestId = requestId.Substring(0, MaxRequestIdLength);
+                }
+                
+                // Additional validation: ensure only safe characters
+                if (!System.Text.RegularExpressions.Regex.IsMatch(requestId, @"^[a-zA-Z0-9\-_:]+$"))
+                {
+                    _logger.LogWarning("RequestId contains potentially unsafe characters. Generating safe alternative.");
+                    requestId = Guid.NewGuid().ToString("N"); // Generate safe correlation ID
+                }
             }
             
-            return View(new ErrorViewModel { RequestId = requestId });
+            return View(new ErrorViewModel { RequestId = requestId ?? "N/A" });
         }
         catch (Exception ex)
         {
             // Fallback error handling - log but don't expose details
+            // Generate a safe correlation ID for tracking
             _logger.LogCritical(ex, "Critical error in Error action");
-            return View(new ErrorViewModel { RequestId = "Unknown" });
+            return View(new ErrorViewModel { RequestId = Guid.NewGuid().ToString("N") });
         }
     }
 }
