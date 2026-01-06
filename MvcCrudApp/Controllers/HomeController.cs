@@ -11,6 +11,9 @@ namespace MvcCrudApp.Controllers;
 public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;
+    
+    // Maximum allowed length for RequestId to prevent potential attacks
+    private const int MaxRequestIdLength = 200;
 
     public HomeController(ILogger<HomeController> logger)
     {
@@ -24,16 +27,9 @@ public class HomeController : Controller
     [HttpGet]
     public IActionResult Index()
     {
-        try
-        {
-            _logger.LogInformation("Home page accessed from IP: {IPAddress}", HttpContext.Connection.RemoteIpAddress);
-            return View();
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error displaying home page");
-            return RedirectToAction(nameof(Error));
-        }
+        // Log page access at Debug level for privacy compliance (GDPR, CCPA)
+        _logger.LogDebug("Home page accessed from IP: {IPAddress}", HttpContext.Connection.RemoteIpAddress);
+        return View();
     }
 
     /// <summary>
@@ -43,16 +39,9 @@ public class HomeController : Controller
     [HttpGet]
     public IActionResult Privacy()
     {
-        try
-        {
-            _logger.LogInformation("Privacy page accessed from IP: {IPAddress}", HttpContext.Connection.RemoteIpAddress);
-            return View();
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error displaying privacy page");
-            return RedirectToAction(nameof(Error));
-        }
+        // Log page access at Debug level for privacy compliance (GDPR, CCPA)
+        _logger.LogDebug("Privacy page accessed from IP: {IPAddress}", HttpContext.Connection.RemoteIpAddress);
+        return View();
     }
 
     /// <summary>
@@ -68,15 +57,15 @@ public class HomeController : Controller
         {
             var requestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier;
             
-            // Log error access for security monitoring
-            _logger.LogWarning("Error page accessed. RequestId: {RequestId}, IP: {IPAddress}", 
-                requestId, HttpContext.Connection.RemoteIpAddress);
+            // Log error access for security monitoring at Debug level for privacy compliance
+            _logger.LogWarning("Error page accessed. RequestId: {RequestId}", requestId);
+            _logger.LogDebug("Error page accessed from IP: {IPAddress}", HttpContext.Connection.RemoteIpAddress);
             
             // Validate and sanitize RequestId to prevent potential XSS
-            if (!string.IsNullOrEmpty(requestId) && requestId.Length > 200)
+            if (!string.IsNullOrEmpty(requestId) && requestId.Length > MaxRequestIdLength)
             {
                 _logger.LogWarning("Suspicious RequestId length detected: {Length}", requestId.Length);
-                requestId = requestId.Substring(0, 200);
+                requestId = requestId.Substring(0, MaxRequestIdLength);
             }
             
             return View(new ErrorViewModel { RequestId = requestId });
