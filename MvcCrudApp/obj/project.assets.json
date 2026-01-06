@@ -8401,7 +8401,7 @@
     ]
   },
   "packageFolders": {
-    "/home/runner/.nuget/packages/": {}
+    "/home/runner/work/MvcAppService/.codeql-scratch/dbs/csharp/working/packages": {}
   },
   "project": {
     "version": "1.0.0",
@@ -8409,7 +8409,7 @@
       "projectUniqueName": "/home/runner/work/MvcAppService/MvcAppService/MvcCrudApp/MvcCrudApp.csproj",
       "projectName": "MvcCrudApp",
       "projectPath": "/home/runner/work/MvcAppService/MvcAppService/MvcCrudApp/MvcCrudApp.csproj",
-      "packagesPath": "/home/runner/.nuget/packages/",
+      "packagesPath": "/home/runner/work/MvcAppService/.codeql-scratch/dbs/csharp/working/packages",
       "outputPath": "/home/runner/work/MvcAppService/MvcAppService/MvcCrudApp/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
@@ -8485,6 +8485,20 @@
         ],
         "assetTargetFallback": true,
         "warn": true,
+        "downloadDependencies": [
+          {
+            "name": "Microsoft.AspNetCore.App.Ref",
+            "version": "[9.0.11, 9.0.11]"
+          },
+          {
+            "name": "Microsoft.NETCore.App.Host.linux-x64",
+            "version": "[9.0.11, 9.0.11]"
+          },
+          {
+            "name": "Microsoft.NETCore.App.Ref",
+            "version": "[9.0.11, 9.0.11]"
+          }
+        ],
         "frameworkReferences": {
           "Microsoft.AspNetCore.App": {
             "privateAssets": "none"
